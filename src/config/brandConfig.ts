@@ -85,8 +85,8 @@ export const brandConfig: BrandConfig = {
   commitment: {
     percentage: "5%",
     recipient: "Indian Army",
-    primaryMessage: "5% OF OUR INCOME IS DEDICATED TO SUPPORTING THE INDIAN ARMY",
-    supportingMessage: "YOUR CHOICE HELPS OUR BRAVE SOLDIERS. DRINK PURE. SUPPORT A STRONGER INDIA.",
+    primaryMessage: "5% of our income is dedicated to supporting the Indian Army.",
+    supportingMessage: "Your choice helps our brave soldiers. Drink Pure. Support a Stronger India.",
     transparencyNote: "As declared on our official bottle packaging, APEX dedicates 5% of its operating income towards supporting Indian Army welfare initiatives."
   },
 

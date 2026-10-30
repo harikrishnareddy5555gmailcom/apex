@@ -3,29 +3,417 @@
 @layer base {
   :root {
     --primary-blue: #0A3D91;
-    --primary-dark: #061B40;
-    --accent-cyan: #00A3E0;
+    --primary-dark: #041026;
+    --accent-cyan: #4AE2F2;
+    --crystal-blue: #2563EB;
     --brand-gold: #FFB800;
+    --water-surface: #F4F9FD;
   }
 
   html {
     scroll-behavior: smooth;
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    overflow-x: hidden;
   }
 
   body {
-    background-color: #F8FAFD;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont,
+      'Segoe UI', Roboto, sans-serif;
+    background-color: #ffffff;
     color: #0F172A;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Accessible touch targets */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  footer a,
+  nav a {
+    min-height: unset;
+    min-width: unset;
+  }
+
+  /* Global reduced-motion override */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
-/* Custom keyframe animations */
-@keyframes pulseSubtle {
-  0%, 100% { opacity: 0.9; transform: scale(1); }
-  50% { opacity: 1; transform: scale(1.02); }
+/* ─────────────────────────────────────────────
+   SCROLL REVEAL ANIMATIONS
+   ───────────────────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.animate-pulse-subtle {
-  animation: pulseSubtle 4s ease-in-out infinite;
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-24px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-left.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(24px);
+  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.reveal-right.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.delay-100 { transition-delay: 0.1s; }
+.delay-200 { transition-delay: 0.2s; }
+.delay-300 { transition-delay: 0.3s; }
+.delay-400 { transition-delay: 0.4s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-left, .reveal-right {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   MOTION: GENTLE LIQUID FLOATING
+   ───────────────────────────────────────────── */
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-9px) rotate(0.4deg);
+  }
+}
+
+@keyframes floatGentleAlt {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(-0.4deg);
+  }
+}
+
+.animate-float-1 {
+  animation: floatGentle 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-float-2 {
+  animation: floatGentleAlt 8s ease-in-out infinite;
+  animation-delay: -3.5s;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-float-1,
+  .animate-float-2 {
+    animation: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   MOTION: LIQUID CAUSTICS & WATER SHIMMER
+   ───────────────────────────────────────────── */
+@keyframes waterShimmer {
+  0% {
+    transform: translateX(-120%) skewX(-20deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.85;
+  }
+  70% {
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateX(240%) skewX(-20deg);
+    opacity: 0;
+  }
+}
+
+.water-shimmer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.water-shimmer::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(74, 226, 242, 0.04) 30%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(74, 226, 242, 0.04) 70%,
+    transparent 100%
+  );
+  animation: waterShimmer 10s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .water-shimmer::after {
+    animation: none;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   MOTION: AMBIENT WATER RIPPLE PULSE
+   ───────────────────────────────────────────── */
+@keyframes ripplePulse {
+  0%, 100% { opacity: 0.04; transform: scale(1); }
+  50% { opacity: 0.075; transform: scale(1.02); }
+}
+
+.ripple-pulse {
+  animation: ripplePulse 11s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ripple-pulse {
+    animation: none;
+    opacity: 0.05;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   MOTION: LIQUID GLOW & REFRACTION
+   ───────────────────────────────────────────── */
+@keyframes liquidGlowPulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.06); }
+}
+
+.liquid-glow {
+  animation: liquidGlowPulse 7s ease-in-out infinite;
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquid-glow {
+    animation: none;
+    opacity: 0.7;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   MOTION: WATER FLOW STREAM (Interactive Purification Pipeline)
+   ───────────────────────────────────────────── */
+@keyframes waterFlowPulse {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes waterFlowVertical {
+  0% {
+    background-position: 0 -200%;
+  }
+  100% {
+    background-position: 0 200%;
+  }
+}
+
+.water-flow-active {
+  background: linear-gradient(
+    90deg,
+    rgba(74, 226, 242, 0.25) 0%,
+    rgba(37, 99, 235, 0.6) 25%,
+    rgba(74, 226, 242, 1) 50%,
+    rgba(37, 99, 235, 0.6) 75%,
+    rgba(74, 226, 242, 0.25) 100%
+  );
+  background-size: 200% 100%;
+  animation: waterFlowPulse 4s linear infinite;
+}
+
+.water-flow-vertical-active {
+  background: linear-gradient(
+    180deg,
+    rgba(74, 226, 242, 0.25) 0%,
+    rgba(37, 99, 235, 0.6) 25%,
+    rgba(74, 226, 242, 1) 50%,
+    rgba(37, 99, 235, 0.6) 75%,
+    rgba(74, 226, 242, 0.25) 100%
+  );
+  background-size: 100% 200%;
+  animation: waterFlowVertical 4s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .water-flow-active,
+  .water-flow-vertical-active {
+    animation: none;
+    background-position: 0 0;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   MOTION: WAVE DRIFT (Fluid continuous transition)
+   ───────────────────────────────────────────── */
+@keyframes waveShift {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.wave-animate {
+  animation: waveShift 18s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wave-animate { animation: none; }
+}
+
+/* ─────────────────────────────────────────────
+   MOTION: HERO SCROLL BOUNCE
+   ───────────────────────────────────────────── */
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0) translateX(-50%); }
+  50%      { transform: translateY(6px) translateX(-50%); }
+}
+
+.animate-bounce-scroll {
+  animation: bounceDown 2.2s ease-in-out infinite;
+}
+
+/* ─────────────────────────────────────────────
+   UTILITY: LIQUID BUTTON TACTILE INTERACTIONS
+   ───────────────────────────────────────────── */
+.btn-liquid {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.25s ease;
+}
+
+.btn-liquid:hover {
+  transform: translateY(-2px);
+}
+
+.btn-liquid:active {
+  transform: translateY(1px) scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-liquid:hover,
+  .btn-liquid:active {
+    transform: none !important;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   UTILITY: GLASSMORPHISM & TRANSLUCENT SURFACES
+   ───────────────────────────────────────────── */
+.glass-panel-light {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 30px -5px rgba(10, 61, 145, 0.06), 0 4px 6px -2px rgba(10, 61, 145, 0.02);
+}
+
+.glass-panel-dark {
+  background: rgba(4, 16, 38, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.45);
+}
+
+/* ─────────────────────────────────────────────
+   UTILITY: BOTTLE PRESENTATION
+   Always shows cap and base — never clips
+   ───────────────────────────────────────────── */
+.bottle-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center center;
+}
+
+/* ─────────────────────────────────────────────
+   UTILITY: CONTACT & BUTTON HOVER LIFT
+   ───────────────────────────────────────────── */
+.contact-link {
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.contact-link:hover {
+  transform: translateY(-2px);
+}
+
+.contact-link:active {
+  transform: translateY(1px) scale(0.985);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact-link { transition: none; }
+  .contact-link:hover,
+  .contact-link:active { transform: none; }
+}
+
+/* ─────────────────────────────────────────────
+   FOCUS VISIBLE — accessibility
+   ───────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #0A3D91;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ─────────────────────────────────────────────
+   ARMY COMMITMENT SECTION FALLBACK GRADIENT
+   ───────────────────────────────────────────── */
+.commitment-section {
+  background: linear-gradient(
+    135deg,
+    #041026 0%,
+    #061B40 35%,
+    #0A2D62 65%,
+    #041026 100%
+  );
 }

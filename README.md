@@ -1,158 +1,231 @@
-# APEX Premium Packaged Drinking Water — Official Brand Portal
+# APEX Premium Water — Official Brand Website
 
-> **"Pure Water, Stronger India."**  
-> *Official Domain:* [https://apexpremiumwater.com/](https://apexpremiumwater.com/)
-
----
-
-## 1. Project Overview & Source of Truth
-
-This repository contains the complete, production-ready frontend website for **APEX Premium Packaged Drinking Water**. 
-
-All brand assets, company details, regulatory codes, purification stages, and social commitments were extracted directly from the official physical packaging labels:
-- `APEX_Label_1_Liter_High_Quality.pdf`
-- `APEX_Label_500ml_High_Quality.pdf`
-
-### Verified Core Brand Identity:
-- **Brand Name:** APEX
-- **Category:** Premium Packaged Drinking Water
-- **Tagline:** *"Pure Water, Stronger India."*
-- **Sub-Tagline:** *"Perfect Quality in Every Drop.💧"*
-- **Four Label Pillars:** Pure Water | Safe & Hygienic | Essential Minerals | Premium Quality
-- **Enriched Minerals:** Calcium (Ca) & Magnesium (Mg)
-- **Water Treatment Through:** Sand Filtration, Activated Carbon Filtration, Ultra Filtration (UF), Reverse Osmosis (RO), and Ozonation
-- **Official FSSAI License:** `2362603301661`
-- **Shelf Life:** Best before 6 months from the date of packing
-- **Batch / Mfg / MRP:** See Cap/Neck
-- **National Contribution:** 5% of our income is dedicated to supporting the Indian Army
-- **Manufacturer & Packer:** `apecstransit`
-- **Facility Address:** `# 2-108, Uppal, Medchal Malkajgiri, Hyderabad, Telangana - 500098, India`
-- **Enquiries & Distribution Phone:** `+91 95504 57896`
-- **Email:** `nani@apexpremiumwater.com`
+> **"Pure Water, Stronger India."**
+> Official domain: [https://apexpremiumwater.com/](https://apexpremiumwater.com/)
 
 ---
 
-## 2. Creative & Architecture Highlights
+## Verified Brand Information
 
-1. **QR-First Mobile Experience:** Designed specifically for consumers who scan the QR code on a physical bottle of APEX water:
-   - Instant load with zero login or mandatory popups
-   - Floating quick-access mobile bottom bar (`Call Now`, `WhatsApp`, `FSSAI Lic`, `Distribute`)
-   - Direct verification tools for both official bottle QR codes (Brand Portal & FSSAI Info)
-2. **Authentic Assets & Art Direction:**
-   - Real APEX mountain-and-bottle logo artwork cropped directly from label files
-   - High-resolution 3D commercial bottle photography matching the exact blue caps, ribbed grip contours, and label dimensions
-   - Verbatim wording for all legal, storage, and patriotic statements
-3. **Interactive 5-Stage Purification Tour:**
-   - Step-by-step interactive inspection of the multi-barrier filtration system
-4. **Direct Distributor & Retailer Dispatcher:**
-   - Live pre-formatted WhatsApp and email enquiry generator without requiring artificial databases or mock server claims
-5. **Centralized Brand Configuration:**
-   - All company metadata, contacts, and checklist items are strictly typed in `src/config/brandConfig.ts`
+All company details, regulatory codes, and product information on this website were extracted directly from the official bottle label artwork:
 
----
+- `public/assets/APEX_Label_1_Liter_High_Quality.pdf`
+- `public/assets/APEX_Label_500ml_High_Quality.pdf`
 
-## 3. Technology Stack
-
-- **Framework:** React 19 + TypeScript (Strict Type Checking)
-- **Bundler:** Vite 8
-- **Styling:** Tailwind CSS v4 (`@tailwindcss/vite`) with custom design tokens
-- **Icons:** Lucide React
-- **Typography:** Plus Jakarta Sans & system fallbacks
-- **Deployment Target:** Vercel Static Hosting
+| Field | Value | Source |
+|---|---|---|
+| Brand Name | APEX | Label |
+| Tagline | "Pure Water, Stronger India." | Label |
+| Sub-tagline | "Perfect Quality in Every Drop." | Label |
+| Category | Premium Packaged Drinking Water | Label |
+| Products | 500 ml, 1 Litre | Label |
+| Minerals | Calcium (Ca) &amp; Magnesium (Mg) | Label |
+| Water Treatment | Sand Filtration, Activated Carbon, Ultra Filtration (UF), Reverse Osmosis (RO), Ozonation | Label |
+| FSSAI Licence | `2362603301661` | Label |
+| Shelf Life | Best before 6 months from packing | Label |
+| Army Commitment | 5% of income dedicated to supporting the Indian Army | Label (verbatim) |
+| Manufacturer &amp; Packer | apecstransit | Label |
+| Facility Address | #2-108, Uppal, Medchal Malkajgiri, Hyderabad, Telangana – 500098 | Label |
+| Phone / WhatsApp | +91 95504 57896 | Label |
+| Email | nani@apexpremiumwater.com | Label |
 
 ---
 
-## 4. Local Development & Build
+## Technology Stack
+
+| Layer | Technology |
+|---|---|
+| Framework | React 19 + TypeScript (strict) |
+| Bundler | Vite 8 |
+| Styling | Tailwind CSS v4 (`@tailwindcss/vite`) |
+| Icons | Lucide React |
+| Typography | Plus Jakarta Sans (Google Fonts) |
+| Linter | Oxlint |
+| Deployment | Vercel Static Hosting |
+
+---
+
+## Website Sections
+
+| Section | ID | Purpose |
+|---|---|---|
+| Hero | `#hero` | Brand first-impression, tagline, CTAs |
+| About | `#about` | Brand identity, FSSAI, manufacturer |
+| Our Product | `#products` | 500 ml &amp; 1 Litre product cards |
+| Purification | `#purification` | 5-stage treatment (label-verified) |
+| Our Commitment | `#commitment` | Indian Army 5% income dedication |
+| Contact | `#distributor` | Distributor &amp; wholesale enquiries |
+| Footer | — | Nav links, contact, copyright |
+
+---
+
+## Local Development
 
 ### Prerequisites
-- Node.js (v18+ or v20+)
-- npm (v9+)
 
-### Installation
+- Node.js v18+ or v20+
+- npm v9+
+
+### Install &amp; Run
+
 ```bash
-# Clone the repository and navigate into the folder
+# Navigate to the project folder
 cd Apex
 
 # Install dependencies
 npm install
+
+# Start development server
+npm run dev
 ```
 
-### Run Locally
-```bash
-# Start local development server
-npm run dev
+### Build &amp; Check
 
-# Or build and preview production bundle
+```bash
+# TypeScript check (zero errors expected)
+npx tsc --noEmit
+
+# Lint (zero warnings/errors expected)
+npm run lint
+
+# Production build
 npm run build
+
+# Preview production build locally
 npm run preview
 ```
 
-### TypeScript & Production Check
-```bash
-npm run build
-```
-Generates an optimized static production distribution in the `dist/` directory.
-
 ---
 
-## 5. Deployment Guide: Vercel & Custom Domain
+## Deploying to Vercel
 
-### Deploying to Vercel via CLI
+### Option A — Vercel CLI
+
 ```bash
-# Install Vercel CLI (if not already installed)
-npm i -g vercel
+# Install Vercel CLI
+npm install -g vercel
 
-# Deploy directly from the project directory
+# From the project directory
 vercel
 ```
 
-### Deploying to Vercel via Git Repository
-1. Push this repository to GitHub or GitLab.
-2. In the [Vercel Dashboard](https://vercel.com/dashboard), click **Add New Project** and select this repository.
-3. Vercel will automatically detect `Vite` as the framework preset and use:
+Follow the prompts. Vercel auto-detects Vite, sets `npm run build` as the build command, and `dist` as the output directory.
+
+### Option B — Git Integration (Recommended)
+
+1. Push this repository to **GitHub**, **GitLab**, or **Bitbucket**.
+2. In the [Vercel Dashboard](https://vercel.com/dashboard) → **Add New Project** → select your repository.
+3. Vercel detects Vite automatically. Confirm:
    - **Build Command:** `npm run build`
    - **Output Directory:** `dist`
 4. Click **Deploy**.
 
-### Connecting Custom Domain (`apexpremiumwater.com`)
-1. Go to your Project Settings on Vercel -> **Domains**.
+Every push to `main` triggers an automatic redeploy.
+
+---
+
+## Connecting the Custom Domain
+
+### Add the domain in Vercel
+
+1. Go to your Vercel project → **Settings** → **Domains**.
 2. Add `apexpremiumwater.com` and `www.apexpremiumwater.com`.
-3. In your DNS provider (e.g. GoDaddy, Namecheap, Cloudflare):
-   - **A Record:**
-     - Name / Host: `@`
-     - Value / Destination: `76.76.21.21`
-   - **CNAME Record:**
-     - Name / Host: `www`
-     - Value / Destination: `cname.vercel-dns.com`
-4. Vercel automatically issues and provisions a free **Let's Encrypt SSL Certificate (HTTPS)** within a few minutes of DNS propagation.
+3. Vercel will show the required DNS records.
+
+### Configure DNS (at your domain registrar)
+
+| Type | Name / Host | Value / Destination |
+|---|---|---|
+| A | `@` | `76.76.21.21` |
+| CNAME | `www` | `cname.vercel-dns.com` |
+
+DNS propagation typically takes 5–60 minutes.
+
+### HTTPS / SSL Certificate
+
+Vercel automatically provisions and renews a **Let's Encrypt TLS certificate** at no charge once DNS is correctly configured. No manual action is required. The `vercel.json` in this project:
+
+- Permanently redirects `www.apexpremiumwater.com` → `apexpremiumwater.com` (canonical)
+- Sets security headers (`X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, etc.)
+- Aggressively caches static assets (images, JS, CSS) for 1 year
 
 ---
 
-## 6. Owner Verification Checklist & Pending Items
+## Google Search Console — Indexing Guide
 
-The website includes a built-in verification checklist available in `src/config/brandConfig.ts` and via the **"Verified Facts"** button on the UI:
+Follow these steps **after** the live domain is confirmed at `https://apexpremiumwater.com/`.
 
-| Category | Item | Status | Verified Source / Action Needed |
-| :--- | :--- | :--- | :--- |
-| **Licensing** | FSSAI License Number | **Verified** | Extracted from label: `2362603301661` |
-| **Licensing** | BIS / ISI CM/L Code (IS 14543) | **Pending Owner** | Standard for Indian packaged water; confirm if ISI mark code should be displayed |
-| **Commitment** | 5% Indian Army Dedication | **Verified** | Quoted verbatim from physical label artwork |
-| **Commitment** | Designated Welfare Fund Name | **Pending Owner** | Confirm specific fund name (e.g. Armed Forces Flag Day Fund) for formal receipt linkage |
-| **Contact** | Telephone & WhatsApp | **Verified** | Label contact: `+91 95504 57896` |
-| **Contact** | Official Email Address | **Verified** | Label contact: `nani@apexpremiumwater.com` |
-| **Manufacturing** | apecstransit Facility Address | **Verified** | `# 2-108, Uppal, Medchal Malkajgiri, Hyderabad, Telangana - 500098` |
-| **Commercial** | Minimum Order Quantities (MOQ) | **Pending Owner** | Provide wholesale crate quantities and retail dealership terms |
+### Step 1 — Verify ownership
+
+1. Open [Google Search Console](https://search.google.com/search-console/).
+2. Click **Add Property** → choose **Domain** → enter `apexpremiumwater.com`.
+3. Choose a verification method:
+   - **DNS TXT record** (recommended) — add the TXT record at your registrar, then click Verify.
+   - **HTML file** — download the file Vercel provides, place it in `public/`, deploy, then verify.
+
+### Step 2 — Submit the sitemap
+
+1. In Search Console → select your property.
+2. Go to **Sitemaps** (left sidebar).
+3. Enter `https://apexpremiumwater.com/sitemap.xml` and click **Submit**.
+4. The sitemap is pre-built at `public/sitemap.xml` in this repository.
+
+### Step 3 — Request indexing
+
+1. In Search Console → **URL Inspection**.
+2. Enter `https://apexpremiumwater.com/`.
+3. Click **Request Indexing**.
+
+Google typically crawls and indexes the page within a few hours to a few days. Ranking depends on Google's algorithms, content quality, inbound links, and many other factors outside this codebase.
+
+### Step 4 — Monitor performance
+
+- **Performance** tab: impressions, clicks, average position, queries.
+- **Coverage** tab: confirm the page is indexed; check for crawl errors.
+- **Core Web Vitals**: LCP, INP, CLS scores for the live URL.
+
+> **Note:** Vercel deployment on a preview URL (e.g. `apex-xyz.vercel.app`) is `noindex` by default. Only the custom domain `apexpremiumwater.com` will be indexed by Google.
 
 ---
 
-## 7. QA Verification Summary
+## Image Assets
 
-- **Production Build:** Passes `tsc -b && vite build` with 0 warnings/errors.
-- **Visual Inspection:** Verified via automated subagent across desktop (1920x1080) and mobile (390x844).
-- **Interactive Features Tested:**
-  - Product variant switcher (500ml vs 1L)
-  - 5-stage purification interactive stage breakdown
-  - FSSAI QR inspection zoom
-  - Direct WhatsApp and telephone tap-to-call links
-  - Owner checklist modal open/close
-  - Mobile hamburger navigation drawer and sticky quick-action bar
+| File | Purpose | Status |
+|---|---|---|
+| `apex-logo.png` | Brand logo — header, footer, favicon | Real brand asset |
+| `apex-hero-bg.jpg` | Hero section background — Himalayan spring landscape | AI-generated |
+| `apex-product-splash.jpg` | Hero product visual — bottles with water splash | AI-generated (no text/labels) |
+| `apex-water-ripple.jpg` | Water texture — About &amp; Purification section background | AI-generated |
+| `apex-soldiers-flag.png` | Army commitment section background texture | Sourced asset |
+| `apex_bottle_500ml.jpg` | Products section — 500 ml product card | Existing asset |
+| `apex_bottle_1liter.jpg` | Products section — 1 Litre product card &amp; About | Existing asset |
+| `APEX_Label_*.pdf` | **Reference only** — source of truth for all brand info | Label artwork PDFs (not displayed) |
+
+> **Owner action:** Replace `apex_bottle_500ml.jpg` and `apex_bottle_1liter.jpg` with professional product photographs once available. The AI-generated splash image (`apex-product-splash.jpg`) does not show the actual APEX label. Update `brandConfig.productVariants[].image` to point to final photos.
+
+---
+
+## Pending Owner Confirmations
+
+| Item | Status | Action Needed |
+|---|---|---|
+| BIS / ISI CM/L number (IS 14543) | Pending | Confirm if certification exists and provide the CM/L code for display |
+| Indian Army welfare fund name | Pending | Optionally name the specific fund (e.g. Armed Forces Flag Day Fund) for the commitment section |
+| Distributor wholesale pricing &amp; MOQ | Pending | Provide wholesale crate sizes and margin terms for the Contact section |
+| Professional product photography | Pending | Commission or supply real bottle photographs for the Products section |
+
+---
+
+## Build &amp; QA Results (Latest)
+
+```
+TypeScript (tsc --noEmit):       0 errors      ✅
+Oxlint (npm run lint):           0 warnings    ✅
+Production build (npm run build):
+  dist/index.html                5.16 kB  │ gzip: 1.70 kB
+  dist/assets/index-*.css       48.43 kB  │ gzip: 8.80 kB
+  dist/assets/index-*.js       269.23 kB  │ gzip: 81.53 kB
+  Built in 2.35 s               ✅
+```
+
+Visual browser testing was not performed programmatically. The owner should verify the live site visually on mobile and desktop after deploying to the custom domain.

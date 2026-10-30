@@ -1,171 +1,304 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { brandConfig } from '../config/brandConfig';
-import { ShieldCheck, Award, Droplets, ArrowRight, MessageSquare, PhoneCall, Sparkles } from 'lucide-react';
+import { ChevronDown, Sparkles, ShieldCheck, ArrowRight } from 'lucide-react';
+
+const prefersReducedMotion =
+  typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function useReveal() {
+  const ref = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { el.classList.add('visible'); obs.unobserve(el); } },
+      { threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+  return ref;
+}
 
 export const Hero: React.FC = () => {
+  const copyRef = useReveal();
+  const bottleRef = useReveal();
+  const bgRef = useRef<HTMLImageElement | null>(null);
+
+  // Restrained parallax background drift
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+    const img = bgRef.current;
+    if (!img) return;
+    const onScroll = () => {
+      const y = window.scrollY;
+      img.style.transform = `translateY(${y * 0.12}px)`;
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  const handleScrollDown = () => {
+    const el = document.querySelector('#commitment');
+    if (!el) return;
+    const headerOffset = 70;
+    const offsetPosition = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+  };
+
+  const handleProductScroll = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const el = document.querySelector('#products');
+    if (!el) return;
+    const headerOffset = 70;
+    const offsetPosition = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+  };
+
+  const handleDistributorScroll = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const el = document.querySelector('#distributor');
+    if (!el) return;
+    const headerOffset = 70;
+    const offsetPosition = el.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+  };
+
   return (
     <section
       id="hero"
-      className="relative min-h-[92vh] sm:min-h-screen pt-24 sm:pt-28 pb-16 flex items-center justify-center overflow-hidden bg-gradient-to-b from-[#061B40] via-[#0A2E6E] to-[#0D4B9F] text-white"
+      className="relative min-h-screen flex items-center overflow-hidden bg-[#041026]"
     >
-      {/* Background Mountain Atmospheric Overlay */}
-      <div className="absolute inset-0 z-0 opacity-25 mix-blend-luminosity pointer-events-none">
+      {/* ── Layer 1: Photographic Water World & Mountain Landscape ── */}
+      <div className="absolute inset-0 z-0">
         <img
-          src="/assets/apex_mountain_spring.jpg"
-          alt="Himalayan Mountain Background"
-          className="w-full h-full object-cover object-center"
+          ref={bgRef as React.RefObject<HTMLImageElement>}
+          src="/assets/apex-hero-bg.jpg"
+          alt=""
+          aria-hidden="true"
+          className="w-full h-full object-cover"
+          style={{ objectPosition: 'center 35%', willChange: 'transform' }}
+          fetchPriority="high"
+        />
+
+        {/* ── Layer 2: Directional liquid-depth gradient ── */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              'linear-gradient(115deg, rgba(4,16,38,0.96) 0%, rgba(4,16,38,0.85) 42%, rgba(4,16,38,0.52) 70%, rgba(4,16,38,0.30) 100%)',
+          }}
+        />
+
+        {/* ── Layer 3: Realistic water splash & ripple atmosphere behind bottles ── */}
+        <div
+          className="absolute right-0 top-0 bottom-0 w-full lg:w-3/5 pointer-events-none opacity-20 mix-blend-screen"
+          style={{
+            backgroundImage: `url('/assets/apex-product-splash.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+          aria-hidden="true"
+        />
+
+        {/* ── Layer 4: Diagonal water caustic shimmer sweep ── */}
+        <div className="water-shimmer" aria-hidden="true" />
+
+        {/* ── Layer 5: Ambient ripple pulse depth ── */}
+        <div
+          className="absolute inset-0 ripple-pulse pointer-events-none"
+          aria-hidden="true"
+          style={{
+            backgroundImage: `url('/assets/apex-water-ripple.jpg')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            mixBlendMode: 'screen',
+            opacity: 0.05,
+          }}
+        />
+
+        {/* ── Layer 6: Fluid transition into ArmyCommitment section (deep navy flow) ── */}
+        <div
+          className="absolute bottom-0 left-0 right-0 pointer-events-none"
+          style={{
+            height: '120px',
+            background: 'linear-gradient(to bottom, transparent 0%, rgba(4,16,38,0.6) 50%, #051228 100%)',
+          }}
         />
       </div>
 
-      {/* Radial soft lighting gradients */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-cyan-400/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-10 right-10 w-[450px] h-[450px] bg-blue-500/20 rounded-full blur-3xl pointer-events-none" />
+      {/* ── Main Content Grid ── */}
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full pt-28 pb-20 sm:pt-36 sm:pb-28 lg:py-36">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 sm:gap-12 lg:gap-16 items-center">
 
-      {/* Content Container */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
-          
-          {/* Left Column: Brand Story & Call to Actions */}
-          <div className="lg:col-span-7 text-center lg:text-left space-y-6">
-            
-            {/* Top Verified Badges Bar */}
-            <div className="inline-flex flex-wrap items-center justify-center lg:justify-start gap-2 sm:gap-3">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 backdrop-blur-md">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                FSSAI Lic. #{brandConfig.fssaiLicenseNumber}
-              </span>
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-200 border border-amber-400/30 backdrop-blur-md">
-                <Award className="w-3.5 h-3.5 text-amber-400" />
-                5% Dedicated to Indian Army
-              </span>
+          {/* Left Column: Premium Brand Storytelling ── */}
+          <div
+            ref={copyRef as React.RefObject<HTMLDivElement>}
+            className="reveal text-center lg:text-left"
+          >
+            {/* Fluid Pill Eyebrow */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-400/25 backdrop-blur-md mb-5 sm:mb-6 shadow-sm">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+              <p className="text-cyan-300 font-bold uppercase tracking-[0.22em] text-[10px] sm:text-xs">
+                {brandConfig.subTagline}
+              </p>
             </div>
 
             {/* Main Headline */}
-            <div className="space-y-2">
-              <div className="text-cyan-300 font-bold uppercase tracking-widest text-xs sm:text-sm flex items-center justify-center lg:justify-start gap-2">
-                <Droplets className="w-4 h-4 text-cyan-400 animate-pulse" />
-                <span>{brandConfig.subTagline}</span>
-              </div>
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-[1.1] text-white">
-                Pure Water, <br />
-                <span className="bg-gradient-to-r from-cyan-300 via-sky-200 to-white bg-clip-text text-transparent">
-                  Stronger India.
-                </span>
-              </h1>
-            </div>
+            <h1
+              className="font-black tracking-tight leading-[1.04] text-white mb-5 sm:mb-6 drop-shadow-[0_4px_16px_rgba(0,0,0,0.6)]"
+              style={{ fontSize: 'clamp(2.35rem, 6.8vw, 4.85rem)' }}
+            >
+              Pure Water,
+              <span
+                className="block bg-gradient-to-r from-[#4AE2F2] via-[#60A5FA] to-[#93C5FD] bg-clip-text text-transparent"
+              >
+                Stronger India.
+              </span>
+            </h1>
 
-            {/* Supporting Verified Statement */}
-            <p className="text-base sm:text-lg text-blue-100/90 max-w-2xl mx-auto lg:mx-0 font-normal leading-relaxed">
-              Premium packaged drinking water infused with essential <strong className="text-white font-semibold">Calcium & Magnesium</strong> minerals. Purified through a rigorous <strong className="text-white font-semibold">5-stage water treatment</strong> (Sand, Carbon, UF, Reverse Osmosis, and Ozonation) for unmatched crispness and hydration.
+            {/* Editorial Body Copy */}
+            <p
+              className="text-blue-100/85 leading-relaxed max-w-lg mx-auto lg:mx-0 mb-7 sm:mb-8 text-sm sm:text-base font-normal"
+            >
+              Masterfully purified through rigorous 5-stage treatment and naturally
+              balanced with essential Calcium and Magnesium.
+              <span className="block mt-2 font-semibold text-amber-300/95">
+                5% of our income is proudly dedicated to supporting the Indian Army.
+              </span>
             </p>
 
-            {/* Army Contribution Micro-Banner */}
-            <div className="p-3.5 sm:p-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15 max-w-xl mx-auto lg:mx-0 shadow-lg flex items-center gap-4">
-              <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-amber-400/20 border border-amber-300/40 flex items-center justify-center font-black text-amber-300 text-lg">
-                5%
-              </div>
-              <div className="text-left">
-                <p className="text-xs sm:text-sm font-bold text-white uppercase tracking-wide">
-                  Our Social Commitment
-                </p>
-                <p className="text-[11px] sm:text-xs text-blue-100">
-                  5% of our income is dedicated to supporting the <span className="font-semibold text-amber-300">Indian Army</span>. Drink pure. Support a stronger India.
-                </p>
-              </div>
-            </div>
-
-            {/* CTAs */}
-            <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4">
-              <a
-                href="#products"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-slate-950 font-extrabold text-sm shadow-lg hover:shadow-cyan-500/25 transition-all transform hover:-translate-y-0.5"
-              >
-                <span>Explore 500ml & 1L Bottles</span>
-                <ArrowRight className="w-4 h-4" />
-              </a>
-
+            {/* Elegant Fluid CTAs with Tactile Feedback */}
+            <div className="flex flex-col sm:flex-row gap-3.5 items-center justify-center lg:justify-start">
               <a
                 href="#distributor"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-white/10 hover:bg-white/20 text-white font-bold text-sm border border-white/25 backdrop-blur-md transition-all"
+                onClick={handleDistributorScroll}
+                className="btn-liquid w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-gradient-to-r from-white via-cyan-50 to-blue-50 text-[#0A3D91] font-extrabold text-sm shadow-[0_10px_25px_-5px_rgba(74,226,242,0.3)] hover:shadow-[0_15px_30px_-5px_rgba(74,226,242,0.45)] transition-all duration-200"
               >
-                <MessageSquare className="w-4 h-4 text-cyan-300" />
-                <span>Distributor Enquiry</span>
+                <span>Become a Distributor</span>
+                <ArrowRight className="w-4 h-4 text-[#0A3D91]" aria-hidden="true" />
               </a>
 
               <a
-                href={`tel:${brandConfig.contact.primaryPhone}`}
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-4 py-3.5 rounded-full bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold text-sm border border-emerald-400/30 transition-all"
-                title="Direct call"
+                href="#products"
+                onClick={handleProductScroll}
+                className="btn-liquid w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full border border-white/20 bg-white/5 hover:bg-white/12 backdrop-blur-md text-white font-semibold text-sm transition-all duration-200"
               >
-                <PhoneCall className="w-4 h-4" />
-                <span>Call {brandConfig.contact.displayPhone}</span>
+                <span>Explore Products</span>
               </a>
             </div>
 
-            {/* Live Trust Badges */}
-            <div className="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
-              <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                <span className="block text-xs font-bold text-cyan-300">Pure Water</span>
-                <span className="block text-[10px] text-blue-200">5-Stage Treatment</span>
+            {/* Purity Assurance Pills */}
+            <div className="mt-8 sm:mt-10 pt-6 border-t border-white/10 flex flex-wrap items-center justify-center lg:justify-start gap-4 sm:gap-6 text-xs text-blue-200/75">
+              <div className="flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-300" aria-hidden="true" />
+                <span>Enriched with Ca &amp; Mg</span>
               </div>
-              <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                <span className="block text-xs font-bold text-cyan-300">Safe & Hygienic</span>
-                <span className="block text-[10px] text-blue-200">Ozonated Freshness</span>
-              </div>
-              <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                <span className="block text-xs font-bold text-cyan-300">Essential Minerals</span>
-                <span className="block text-[10px] text-blue-200">Calcium & Magnesium</span>
-              </div>
-              <div className="p-2 rounded-xl bg-white/5 border border-white/10">
-                <span className="block text-xs font-bold text-cyan-300">Make In India</span>
-                <span className="block text-[10px] text-blue-200">Hyderabad Packed</span>
+              <div className="w-1 h-1 rounded-full bg-blue-300/40 hidden sm:block" />
+              <div className="flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 text-cyan-300" aria-hidden="true" />
+                <span>5-Stage Multi-Barrier</span>
               </div>
             </div>
-
           </div>
 
-          {/* Right Column: High-End Bottle Showcase Composition */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center relative">
-            <div className="relative w-full max-w-md sm:max-w-lg aspect-[3/4] rounded-3xl overflow-hidden shadow-2xl border border-white/20 group">
-              {/* Luxury Studio Bottle Photography */}
-              <img
-                src="/assets/apex_hero_bottles.jpg"
-                alt="APEX Premium Packaged Drinking Water Bottles (1L and 500ml)"
-                className="w-full h-full object-cover object-center transform group-hover:scale-102 transition-transform duration-700"
+          {/* Right Column: Floating Authentic Bottle Presentation ── */}
+          <div
+            ref={bottleRef as React.RefObject<HTMLDivElement>}
+            className="reveal delay-200 flex items-center justify-center"
+          >
+            <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-md">
+
+              {/* Cyan/Blue Liquid Caustic Aura */}
+              <div
+                className="liquid-glow absolute inset-0 pointer-events-none"
+                style={{
+                  background: 'radial-gradient(ellipse at 50% 55%, rgba(74,226,242,0.32) 0%, rgba(10,61,145,0.22) 48%, transparent 75%)',
+                  filter: 'blur(32px)',
+                  transform: 'scale(1.15)',
+                }}
+                aria-hidden="true"
               />
 
-              {/* Glossy Overlay Badge */}
-              <div className="absolute top-4 left-4 bg-slate-950/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20 flex items-center gap-1.5 shadow-md">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                <span className="text-xs font-bold text-white tracking-wide">Official Brand Pack</span>
+              {/* Water Surface Ripple Base beneath bottles */}
+              <div
+                className="absolute -bottom-6 left-1/2 -translate-x-1/2 w-4/5 h-12 pointer-events-none"
+                style={{
+                  background: 'radial-gradient(ellipse at 50% 50%, rgba(74,226,242,0.4) 0%, rgba(10,61,145,0.2) 50%, transparent 80%)',
+                  filter: 'blur(10px)',
+                }}
+                aria-hidden="true"
+              />
+
+              {/* Two Bottles Floating Harmoniously (Cap & Base 100% visible) */}
+              <div className="relative flex items-end justify-center gap-3 sm:gap-6 px-2">
+
+                {/* 500ml Bottle (Gentle floating motion 1) */}
+                <div className="animate-float-1 relative flex-1 max-w-[120px] min-[380px]:max-w-[140px] sm:max-w-[160px] drop-shadow-[0_20px_30px_rgba(0,0,0,0.65)] group cursor-pointer transition-transform duration-300 hover:scale-105">
+                  {/* Floating Volume Badge */}
+                  <div className="text-center mb-2.5">
+                    <span className="inline-block bg-white/15 backdrop-blur-md border border-white/25 text-white text-[10px] font-extrabold px-3 py-1 rounded-full tracking-wider shadow-sm">
+                      500 ml
+                    </span>
+                  </div>
+
+                  {/* Bottle Container with pure aspect ratio */}
+                  <div
+                    className="relative bg-transparent rounded-2xl overflow-hidden p-1"
+                    style={{ aspectRatio: '3/5' }}
+                  >
+                    <img
+                      src="/assets/apex_bottle_500ml.jpg"
+                      alt="APEX Premium Packaged Drinking Water — 500ml Bottle"
+                      className="bottle-img transition-transform duration-500 group-hover:scale-105"
+                      loading="eager"
+                    />
+                  </div>
+                </div>
+
+                {/* 1 Litre Bottle (Gentle floating motion 2) */}
+                <div className="animate-float-2 relative flex-1 max-w-[135px] min-[380px]:max-w-[155px] sm:max-w-[180px] drop-shadow-[0_25px_35px_rgba(0,0,0,0.7)] -mb-2 group cursor-pointer transition-transform duration-300 hover:scale-105">
+                  {/* Floating Volume Badge */}
+                  <div className="text-center mb-2.5">
+                    <span className="inline-block bg-gradient-to-r from-[#0A3D91]/90 to-[#0C48A9]/90 backdrop-blur-md border border-cyan-400/35 text-cyan-200 text-[10px] font-extrabold px-3 py-1 rounded-full tracking-wider shadow-sm">
+                      1 Litre
+                    </span>
+                  </div>
+
+                  {/* Bottle Container */}
+                  <div
+                    className="relative bg-transparent rounded-2xl overflow-hidden p-1"
+                    style={{ aspectRatio: '3/5' }}
+                  >
+                    <img
+                      src="/assets/apex_bottle_1liter.jpg"
+                      alt="APEX Premium Packaged Drinking Water — 1 Litre Bottle"
+                      className="bottle-img transition-transform duration-500 group-hover:scale-105"
+                      loading="eager"
+                    />
+                  </div>
+                </div>
+
               </div>
 
-              {/* Bottom Card Inside Hero Visual */}
-              <div className="absolute bottom-4 left-4 right-4 bg-slate-900/85 backdrop-blur-md p-3.5 rounded-2xl border border-white/20 shadow-xl flex items-center justify-between">
-                <div>
-                  <p className="text-[11px] uppercase tracking-wider text-cyan-300 font-bold">Two Sizes Available</p>
-                  <p className="text-sm font-extrabold text-white">1 Liter & 500ml Variants</p>
-                </div>
-                <div className="text-right">
-                  <span className="text-[10px] text-blue-200 block">Best Before</span>
-                  <span className="text-xs font-bold text-emerald-400">6 Months</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Label Verification Prompt */}
-            <div className="mt-3 text-center">
-              <p className="text-xs text-blue-200/80 flex items-center justify-center gap-1.5">
-                <span>Direct scan from bottle label?</span>
-                <a href="#quality" className="text-cyan-300 underline font-semibold hover:text-white transition-colors">
-                  View FSSAI & Product Details
-                </a>
-              </p>
             </div>
           </div>
 
         </div>
       </div>
+
+      {/* ── Scroll Down Indicator ── */}
+      <button
+        type="button"
+        onClick={handleScrollDown}
+        className="absolute bottom-6 left-1/2 z-20 text-cyan-300/40 hover:text-cyan-300 transition-colors animate-bounce-scroll flex flex-col items-center gap-1 active:scale-95"
+        aria-label="Scroll down to our national commitment"
+        style={{ transform: 'translateX(-50%)' }}
+      >
+        <span className="text-[9px] uppercase tracking-[0.2em] font-bold">Discover</span>
+        <ChevronDown className="w-5 h-5" />
+      </button>
     </section>
   );
 };

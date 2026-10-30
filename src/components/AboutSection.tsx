@@ -1,163 +1,187 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { brandConfig } from '../config/brandConfig';
-import { Building2, MapPin, CheckCircle2, ShieldCheck, HeartHandshake, Eye } from 'lucide-react';
+import { Droplets, Sparkles, ShieldCheck, MapPin } from 'lucide-react';
+
+function useReveal(direction: 'up' | 'left' | 'right' = 'up') {
+  const ref = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const cls = direction === 'left' ? 'reveal-left' : direction === 'right' ? 'reveal-right' : 'reveal';
+    el.classList.add(cls);
+    const obs = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) { el.classList.add('visible'); obs.unobserve(el); } },
+      { threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [direction]);
+  return ref;
+}
 
 export const AboutSection: React.FC = () => {
+  const imageRef = useReveal('left');
+  const copyRef = useReveal('right');
+
   return (
-    <section id="about" className="py-20 bg-slate-50 relative overflow-hidden">
-      {/* Decorative ambient elements */}
-      <div className="absolute top-0 right-0 w-96 h-96 bg-blue-100/50 rounded-full blur-3xl pointer-events-none -mr-20 -mt-20" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-cyan-100/40 rounded-full blur-3xl pointer-events-none -ml-20 -mb-20" />
+    <section
+      id="about"
+      className="relative py-20 sm:py-28 lg:py-36 bg-[#F4F9FD] overflow-hidden"
+    >
+      {/* ── Ambient Fluid Water Elements ── */}
+      <div
+        className="absolute top-0 right-0 w-96 h-96 pointer-events-none opacity-40 mix-blend-multiply"
+        style={{
+          background: 'radial-gradient(circle at 70% 30%, rgba(74,226,242,0.25) 0%, rgba(10,61,145,0.05) 60%, transparent 80%)',
+          filter: 'blur(40px)',
+        }}
+        aria-hidden="true"
+      />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        
-        {/* Section Heading */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-800 mb-3">
-            <Building2 className="w-3.5 h-3.5 text-blue-600" />
-            <span>Brand Philosophy & Origin</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">
-            About APEX Premium Water
-          </h2>
-          <p className="text-base text-slate-600 mt-3 max-w-2xl mx-auto leading-relaxed">
-            Founded with a steadfast mission: to deliver pristine, mineral-rich packaged drinking water while dedicating a tangible portion of proceeds to national service.
-          </p>
-        </div>
+      <div
+        className="absolute bottom-10 left-0 w-80 h-80 pointer-events-none opacity-30 mix-blend-multiply"
+        style={{
+          background: 'radial-gradient(circle at 30% 70%, rgba(96,165,250,0.2) 0%, transparent 70%)',
+          filter: 'blur(35px)',
+        }}
+        aria-hidden="true"
+      />
 
-        {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          
-          {/* Left Column: Authentic Brand Facts & Manufacturer Details */}
-          <div className="lg:col-span-7 space-y-6">
-            <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200/80 space-y-5">
-              
-              <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
-                <div className="p-2.5 rounded-xl bg-blue-50 text-blue-700">
-                  <ShieldCheck className="w-6 h-6" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-black text-slate-900">Official Brand Identity</h3>
-                  <p className="text-xs text-slate-500">Registered Packaged Drinking Water</p>
-                </div>
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+
+          {/* ════ Visual Column: Floating Bottle on Water Reflection Pedestal ════ */}
+          <div
+            ref={imageRef as React.RefObject<HTMLDivElement>}
+            className="relative order-2 lg:order-1 flex flex-col items-center justify-center"
+          >
+            {/* Soft Frosted Glass Halo */}
+            <div
+              className="absolute w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-white/70 backdrop-blur-xl border border-white/90 shadow-[0_20px_50px_rgba(10,61,145,0.08)] pointer-events-none"
+              aria-hidden="true"
+            />
+
+            {/* Ambient Water Ripple Texture */}
+            <div
+              className="absolute inset-0 max-w-sm mx-auto pointer-events-none opacity-10 rounded-3xl"
+              style={{
+                backgroundImage: `url('/assets/apex-water-ripple.jpg')`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                mixBlendMode: 'multiply',
+              }}
+              aria-hidden="true"
+            />
+
+            {/* The 1L Bottle with Water Floor Reflection */}
+            <div className="relative z-10 py-6 sm:py-8 flex flex-col items-center">
+              <div className="animate-float-1 drop-shadow-[0_20px_35px_rgba(10,61,145,0.18)]">
+                <img
+                  src="/assets/apex_bottle_1liter.jpg"
+                  alt="APEX Premium Packaged Drinking Water — 1 Litre bottle"
+                  className="object-contain"
+                  style={{
+                    height: 'clamp(280px, 40vw, 400px)',
+                    width: 'auto',
+                    maxWidth: '100%',
+                  }}
+                  loading="lazy"
+                />
               </div>
 
-              <p className="text-sm sm:text-base text-slate-700 leading-relaxed">
-                <strong className="text-blue-900 font-bold">APEX</strong> is formulated to deliver optimal daily hydration with a clean, crisp palate. Every bottle is processed through multi-barrier treatment and fortified with essential <strong className="text-slate-900 font-semibold">Calcium and Magnesium</strong>.
+              {/* Water Reflection Ring underneath bottle */}
+              <div
+                className="w-44 sm:w-56 h-6 rounded-full mt-2"
+                style={{
+                  background: 'radial-gradient(ellipse at center, rgba(74,226,242,0.5) 0%, rgba(10,61,145,0.18) 50%, transparent 75%)',
+                  filter: 'blur(6px)',
+                }}
+                aria-hidden="true"
+              />
+            </div>
+          </div>
+
+          {/* ════ Copy Column: Editorial Storytelling ════ */}
+          <div
+            ref={copyRef as React.RefObject<HTMLDivElement>}
+            className="space-y-8 order-1 lg:order-2"
+          >
+            <div className="space-y-4 text-center lg:text-left">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-100/60 border border-blue-200/50 backdrop-blur-sm">
+                <Droplets className="w-3.5 h-3.5 text-[#0A3D91]" aria-hidden="true" />
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#0A3D91]">
+                  Purity &amp; Heritage
+                </p>
+              </div>
+
+              <h2
+                className="font-black text-slate-900 tracking-tight leading-[1.12]"
+                style={{ fontSize: 'clamp(2rem, 4.5vw, 3rem)' }}
+              >
+                Pristine Clarity.<br />
+                <span className="text-[#0A3D91]">Purpose in Every Drop.</span>
+              </h2>
+
+              <p className="text-slate-600 leading-relaxed text-base sm:text-lg">
+                <strong className="text-slate-900">APEX Premium Water</strong> represents the
+                finest standard in packaged drinking water. Crafted at our state-of-the-art
+                bottling facility in Hyderabad, Telangana, our water provides refreshing
+                vitality and uncompromised taste.
               </p>
 
-              {/* Confirmed Manufacturer Data Box */}
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
-                <p className="text-xs font-bold uppercase tracking-wider text-slate-500">
-                  Manufactured & Packed By
-                </p>
-                <div className="flex items-start gap-3">
-                  <MapPin className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-bold text-slate-900">
-                      {brandConfig.manufacturer.companyName}
-                    </p>
-                    <p className="text-xs text-slate-600 leading-relaxed">
-                      {brandConfig.manufacturer.fullAddressString}
-                    </p>
-                    <span className="inline-block mt-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                      {brandConfig.manufacturer.countryOfOrigin}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Core Commitments List */}
-              <div className="space-y-3 pt-2">
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900">Strict Quality & Hygienic Bottling</h4>
-                    <p className="text-xs text-slate-600">
-                      Rigid multi-stage purification including Sand, Activated Carbon, Ultra Filtration, Reverse Osmosis, and Ozonation.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <HeartHandshake className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900">5% Dedicated to Indian Army</h4>
-                    <p className="text-xs text-slate-600">
-                      "Your choice helps our brave soldiers. Drink pure. Support a stronger India."
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3">
-                  <Eye className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900">Transparent Labelling & QR Verification</h4>
-                    <p className="text-xs text-slate-600">
-                      Every physical bottle features two distinct QR codes: one for official brand info and one for direct FSSAI license verification.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-
-          {/* Right Column: Genuine Label Artwork Preview & Badge */}
-          <div className="lg:col-span-5 space-y-6">
-            
-            {/* Genuine Label Showcase Box */}
-            <div className="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 overflow-hidden group">
-              <div className="flex items-center justify-between mb-3 px-1">
-                <span className="text-xs font-bold uppercase tracking-wider text-blue-800">
-                  Official Bottle Artwork
-                </span>
-                <span className="text-[11px] font-semibold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
-                  High Quality Source
-                </span>
-              </div>
-
-              <div className="relative rounded-2xl overflow-hidden border border-slate-200 bg-slate-900 aspect-[16/9] shadow-inner">
-                <img
-                  src="/assets/apex-label-full.png"
-                  alt="Official APEX Bottle Label Artwork"
-                  className="w-full h-full object-cover object-left group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent flex items-end p-4">
-                  <p className="text-xs text-white font-semibold">
-                    The authentic packaging label powering both 500ml & 1 Liter variants.
-                  </p>
-                </div>
-              </div>
-
-              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-                <span>Designed & Printed in India</span>
-                <a
-                  href="/assets/APEX_Label_1_Liter_High_Quality.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-700 font-bold hover:underline"
-                >
-                  View 1L Label PDF
-                </a>
-              </div>
+              <p className="text-slate-600 leading-relaxed text-sm sm:text-base">
+                From source collection through five sequential purification barriers to the
+                re-introduction of natural Calcium and Magnesium, every bottle is sealed with a
+                tamper-evident cap to guarantee pure hydration.
+              </p>
             </div>
 
-            {/* Army Commitment Callout Box */}
-            <div className="bg-gradient-to-br from-[#061B40] to-[#0A3D91] rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
-              <div className="relative z-10 flex items-center gap-4">
-                <div className="w-14 h-14 rounded-2xl bg-amber-400/20 border border-amber-300/40 flex items-center justify-center font-black text-amber-300 text-2xl flex-shrink-0">
-                  5%
+            {/* Fluid Feature Pillars */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div className="glass-panel-light p-4 rounded-2xl border border-white/80 shadow-sm flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-blue-500/10 flex items-center justify-center flex-shrink-0 text-[#0A3D91]">
+                  <Droplets className="w-5 h-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-extrabold text-amber-300 uppercase tracking-widest">
-                    Verified Brand Pledge
-                  </h4>
-                  <p className="text-sm font-bold text-white mt-0.5 leading-snug">
-                    "Drink Pure. Support a Stronger India."
+                  <h3 className="text-sm font-bold text-slate-900">5-Stage Treatment</h3>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    Sand, Carbon, Ultra Filtration, Reverse Osmosis &amp; Ozonation.
                   </p>
-                  <p className="text-xs text-blue-200 mt-1">
-                    Every sip contributes 5% of income to our armed forces.
+                </div>
+              </div>
+
+              <div className="glass-panel-light p-4 rounded-2xl border border-white/80 shadow-sm flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center flex-shrink-0 text-amber-600">
+                  <Sparkles className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">Mineral Enriched</h3>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    Fortified with Calcium and Magnesium for smooth, balanced taste.
+                  </p>
+                </div>
+              </div>
+
+              <div className="glass-panel-light p-4 rounded-2xl border border-white/80 shadow-sm flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-emerald-500/10 flex items-center justify-center flex-shrink-0 text-emerald-600">
+                  <ShieldCheck className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">Tamper-Evident</h3>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    Hermetically sealed cap ensuring 100% safety and freshness.
+                  </p>
+                </div>
+              </div>
+
+              <div className="glass-panel-light p-4 rounded-2xl border border-white/80 shadow-sm flex items-start gap-3.5">
+                <div className="w-10 h-10 rounded-xl bg-slate-500/10 flex items-center justify-center flex-shrink-0 text-slate-700">
+                  <MapPin className="w-5 h-5" aria-hidden="true" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">Bottled in Hyderabad</h3>
+                  <p className="text-xs text-slate-500 mt-1 leading-relaxed">
+                    {brandConfig.manufacturer.companyName}, Uppal facility.
                   </p>
                 </div>
               </div>
@@ -166,7 +190,27 @@ export const AboutSection: React.FC = () => {
           </div>
 
         </div>
+      </div>
 
+      {/* ── Wave Divider into Products Section ── */}
+      <div
+        className="absolute bottom-0 left-0 right-0 z-20 overflow-hidden pointer-events-none"
+        style={{ height: '48px' }}
+        aria-hidden="true"
+      >
+        <div className="wave-animate" style={{ width: '200%', height: '100%' }}>
+          <svg
+            viewBox="0 0 1440 48"
+            xmlns="http://www.w3.org/2000/svg"
+            preserveAspectRatio="none"
+            style={{ width: '100%', height: '100%', display: 'block' }}
+          >
+            <path
+              d="M0,20 C360,45 720,5 1080,25 C1260,35 1380,15 1440,20 L1440,48 L0,48 Z"
+              fill="#ffffff"
+            />
+          </svg>
+        </div>
       </div>
     </section>
   );

@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Disallow generated build assets (not meaningful to index)
+Disallow: /assets/*.pdf
+
+# Sitemap location
+Sitemap: https://apexpremiumwater.com/sitemap.xml
+
