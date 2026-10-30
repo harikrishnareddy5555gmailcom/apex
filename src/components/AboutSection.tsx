@@ -169,7 +169,7 @@ export const AboutSection: React.FC = () => {
                 <div>
                   <h3 className="text-sm font-bold text-slate-900">Tamper-Evident</h3>
                   <p className="text-xs text-slate-500 mt-1 leading-relaxed">
-                    Hermetically sealed cap ensuring 100% safety and freshness.
+                    Hermetically sealed cap ensuring safety, hygiene, and freshness.
                   </p>
                 </div>
               </div>

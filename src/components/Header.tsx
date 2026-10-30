@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { brandConfig } from '../config/brandConfig';
 import { Menu, X, Phone, MessageSquare, Droplets } from 'lucide-react';
 
@@ -15,6 +15,10 @@ export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState<string>('hero');
+
+  const triggerButtonRef = useRef<HTMLButtonElement | null>(null);
+  const closeButtonRef = useRef<HTMLButtonElement | null>(null);
+  const drawerPanelRef = useRef<HTMLDivElement | null>(null);
 
   // Handle header appearance on scroll
   useEffect(() => {
@@ -50,20 +54,58 @@ export const Header: React.FC = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Close mobile menu on Escape key
+  // Accessibility: Focus management, body scroll lock, and Escape handling for mobile drawer
   useEffect(() => {
-    if (!mobileMenuOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMobileMenuOpen(false);
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+      // Shift focus into drawer close button
+      setTimeout(() => {
+        closeButtonRef.current?.focus();
+      }, 50);
+
+      const onKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape') {
+          setMobileMenuOpen(false);
+          triggerButtonRef.current?.focus();
+        }
+
+        // Focus trap inside drawer
+        if (e.key === 'Tab' && drawerPanelRef.current) {
+          const focusables = drawerPanelRef.current.querySelectorAll<HTMLElement>(
+            'button, a, [tabindex]:not([tabindex="-1"])'
+          );
+          if (focusables.length === 0) return;
+
+          const first = focusables[0];
+          const last = focusables[focusables.length - 1];
+
+          if (e.shiftKey && document.activeElement === first) {
+            e.preventDefault();
+            last.focus();
+          } else if (!e.shiftKey && document.activeElement === last) {
+            e.preventDefault();
+            first.focus();
+          }
+        }
+      };
+
+      document.addEventListener('keydown', onKeyDown);
+      return () => {
+        document.removeEventListener('keydown', onKeyDown);
+        document.body.style.overflow = '';
+      };
+    } else {
+      document.body.style.overflow = '';
+    }
   }, [mobileMenuOpen]);
 
   // Smooth scroll handler with header height offset
   const handleLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string, id: string) => {
     e.preventDefault();
-    setMobileMenuOpen(false);
+    if (mobileMenuOpen) {
+      setMobileMenuOpen(false);
+      triggerButtonRef.current?.focus();
+    }
     setActiveSection(id);
 
     const targetEl = document.querySelector(href);
@@ -77,6 +119,11 @@ export const Header: React.FC = () => {
       top: offsetPosition,
       behavior: 'smooth',
     });
+  };
+
+  const closeDrawer = () => {
+    setMobileMenuOpen(false);
+    triggerButtonRef.current?.focus();
   };
 
   return (
@@ -176,6 +223,7 @@ export const Header: React.FC = () => {
 
             {/* Mobile Hamburger Button */}
             <button
+              ref={triggerButtonRef}
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className={`lg:hidden p-2 rounded-xl transition-colors duration-200 active:scale-95 ${
@@ -209,12 +257,15 @@ export const Header: React.FC = () => {
           {/* Backdrop */}
           <div
             className="fixed inset-0 bg-[#041026]/75 backdrop-blur-sm transition-opacity"
-            onClick={() => setMobileMenuOpen(false)}
+            onClick={closeDrawer}
             aria-hidden="true"
           />
 
           {/* Panel */}
-          <div className="fixed top-0 right-0 bottom-0 w-[290px] max-w-[calc(100vw-2.5rem)] bg-white/95 backdrop-blur-xl shadow-2xl flex flex-col z-50 border-l border-white/60">
+          <div
+            ref={drawerPanelRef}
+            className="fixed top-0 right-0 bottom-0 w-[290px] max-w-[calc(100vw-2.5rem)] bg-white/95 backdrop-blur-xl shadow-2xl flex flex-col z-50 border-l border-white/60"
+          >
             {/* Header */}
             <div className="flex items-center justify-between p-5 border-b border-slate-100">
               <div className="flex items-center gap-2.5">
@@ -225,9 +276,10 @@ export const Header: React.FC = () => {
                 </div>
               </div>
               <button
+                ref={closeButtonRef}
                 type="button"
-                onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors active:scale-95"
+                onClick={closeDrawer}
+                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
                 aria-label="Close navigation"
               >
                 <X className="w-5 h-5" aria-hidden="true" />
@@ -243,7 +295,7 @@ export const Header: React.FC = () => {
                     key={link.label}
                     href={link.href}
                     onClick={(e) => handleLinkClick(e, link.href, link.id)}
-                    className={`flex items-center justify-between px-4 py-3 rounded-xl font-semibold text-sm transition-all active:scale-[0.98] ${
+                    className={`flex items-center justify-between px-4 py-3 rounded-xl font-semibold text-sm transition-all active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
                       isActive
                         ? 'bg-[#0A3D91] text-white shadow-sm'
                         : 'text-slate-700 hover:text-[#0A3D91] hover:bg-blue-50/70'
@@ -265,14 +317,14 @@ export const Header: React.FC = () => {
                 href={`https://wa.me/${brandConfig.contact.whatsappNumber}?text=${encodeURIComponent('Hello APEX Water Team, I would like to enquire about distribution.')}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-liquid w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-[#0A3D91] to-[#0D52BD] text-white font-bold text-xs shadow hover:shadow-md transition-all active:scale-95"
+                className="btn-liquid w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gradient-to-r from-[#0A3D91] to-[#0D52BD] text-white font-bold text-xs shadow hover:shadow-md transition-all active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
               >
                 <MessageSquare className="w-4 h-4 text-cyan-300" aria-hidden="true" />
                 Distributor Enquiry
               </a>
               <a
                 href={`tel:${brandConfig.contact.primaryPhone}`}
-                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-white transition-colors active:scale-95"
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-slate-200 text-slate-700 font-semibold text-xs hover:bg-white transition-colors active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500"
               >
                 <Phone className="w-3.5 h-3.5 text-[#0A3D91]" aria-hidden="true" />
                 {brandConfig.contact.displayPhone}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Droplets, Filter, Activity, Sparkles, Layers, ShieldCheck, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Droplets, Filter, Activity, Sparkles, Layers, ShieldCheck, ArrowRight } from 'lucide-react';
 import { brandConfig } from '../config/brandConfig';
 
 interface Stage {
@@ -91,6 +91,11 @@ export const PurificationSection: React.FC = () => {
         aria-hidden="true"
       />
 
+      {/* Screen Reader Live Region for Stage Changes */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        Purification Stage {selectedStageData.step} selected: {selectedStageData.title}. {selectedStageData.shortDesc}
+      </div>
+
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Section Header */}
@@ -118,7 +123,7 @@ export const PurificationSection: React.FC = () => {
           </p>
         </div>
 
-        {/* Flowing Water Ribbon Stages (Desktop & Mobile interactive) */}
+        {/* Flowing Water Ribbon Stages */}
         <div
           ref={stagesRef as React.RefObject<HTMLDivElement>}
           className="relative"
@@ -133,25 +138,33 @@ export const PurificationSection: React.FC = () => {
               height: '4px',
               borderRadius: '9999px',
             }}
+            aria-hidden="true"
           >
             <div className="w-full h-full water-flow-active rounded-full" />
           </div>
 
           {/* Connected Grid of Interactive Stages */}
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 relative z-10">
+          <div
+            role="tablist"
+            aria-label="5-Stage water purification process"
+            className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 sm:gap-6 relative z-10"
+          >
             {PURIFICATION_STAGES.map((stage) => {
               const isSelected = activeStage === stage.step;
               return (
                 <button
                   key={stage.step}
                   type="button"
+                  role="tab"
+                  id={`stage-tab-${stage.step}`}
+                  aria-selected={isSelected}
+                  aria-controls="stage-detail-panel"
                   onClick={() => setActiveStage(stage.step)}
                   className={`text-left group relative rounded-3xl p-6 transition-all duration-300 flex flex-col justify-between cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-500 ${
                     isSelected
                       ? 'bg-white shadow-xl shadow-cyan-900/10 border-2 border-[#0A3D91] scale-[1.02]'
                       : 'bg-white/80 hover:bg-white border border-slate-200/80 hover:border-cyan-300 shadow-sm hover:shadow-md'
                   }`}
-                  aria-pressed={isSelected}
                   aria-label={`Stage ${stage.step}: ${stage.title}`}
                 >
                   {/* Node Header */}
@@ -214,32 +227,27 @@ export const PurificationSection: React.FC = () => {
           </div>
 
           {/* Interactive Inspection Detail Card (Real-Time Stage View) */}
-          <div className="mt-8 rounded-3xl p-6 sm:p-8 bg-white border border-slate-200/90 shadow-lg relative overflow-hidden transition-all duration-300">
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-              <div className="space-y-2 max-w-2xl">
-                <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-1 rounded-full bg-[#0A3D91] text-white text-[10px] font-black uppercase tracking-wider">
-                    Stage 0{selectedStageData.step} Breakdown
-                  </span>
-                  <span className="text-xs font-bold text-cyan-600">
-                    {selectedStageData.detail}
-                  </span>
-                </div>
-                <h4 className="text-xl sm:text-2xl font-black text-slate-900">
-                  {selectedStageData.title}
-                </h4>
-                <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
-                  {selectedStageData.detailedDesc}
-                </p>
+          <div
+            id="stage-detail-panel"
+            role="tabpanel"
+            aria-labelledby={`stage-tab-${selectedStageData.step}`}
+            className="mt-8 rounded-3xl p-6 sm:p-8 bg-white border border-slate-200/90 shadow-lg relative overflow-hidden transition-all duration-300"
+          >
+            <div className="space-y-2 max-w-3xl">
+              <div className="flex items-center gap-2">
+                <span className="px-2.5 py-1 rounded-full bg-[#0A3D91] text-white text-[10px] font-black uppercase tracking-wider">
+                  Stage 0{selectedStageData.step} Breakdown
+                </span>
+                <span className="text-xs font-bold text-cyan-600">
+                  {selectedStageData.detail}
+                </span>
               </div>
-
-              <div className="flex-shrink-0 flex items-center gap-3 bg-blue-50/80 border border-blue-100 rounded-2xl p-4">
-                <CheckCircle2 className="w-5 h-5 text-emerald-600" aria-hidden="true" />
-                <div className="text-xs">
-                  <span className="font-bold text-slate-800 block">Verified on Official Artwork</span>
-                  <span className="text-slate-500">100% compliant with declared process</span>
-                </div>
-              </div>
+              <h4 className="text-xl sm:text-2xl font-black text-slate-900">
+                {selectedStageData.title}
+              </h4>
+              <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+                {selectedStageData.detailedDesc}
+              </p>
             </div>
           </div>
         </div>
